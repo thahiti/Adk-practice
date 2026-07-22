@@ -8,3 +8,9 @@ dependencies = [
     "google-adk[eval]==1.36.1",
     "litellm>=1.83.7,<=1.83.14",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+]
