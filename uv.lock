@@ -20,7 +20,7 @@ wheels = [
 ]
 
 [[package]]
-name = "adk-triage-lab"
+name = "adk-orchestration-lab"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
