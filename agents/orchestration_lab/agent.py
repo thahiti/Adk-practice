@@ -30,8 +30,8 @@ _INSTRUCTION = """\
    인자로 전달하라. 값을 반올림하거나 다시 계산하지 마라.
 4. 모든 단계가 끝나면 최종 숫자만 간결하게 답하라.
 
-예시: "3, 5, 10의 최댓값에 2를 곱해줘" 는 stats_agent 로 max 를 구한 뒤,
-그 결과를 calc_agent 의 left 인자로 넘겨 multiply 를 수행한다.
+예시: "4, 8, 6의 중앙값을 kg에서 파운드로 바꿔줘" 는 stats_agent 로 median 을
+구한 뒤, 그 결과를 convert_agent 의 value 인자로 넘겨 kg_to_pound 를 수행한다.
 """
 
 root_agent = LlmAgent(
