@@ -57,6 +57,14 @@ def delegation_route_score(
     수행하므로 여기서는 점수만 정확히 채운다. `eval_metric.threshold` 는
     호출 직전 None 으로 덮어써지므로 읽지 않는다.
 
+    `actual_invocations` 와 `expected` 의 길이가 다르면 `zip` 이 짧은 쪽
+    기준으로 잘라내므로, 점수 합을 `len(results)` 가 아니라
+    `max(len(actual_invocations), len(expected))` 로 나눈다. 이렇게 하면
+    누락되거나 초과된 invocation 이 점수를 희석시켜, 조기 종료한 에이전트가
+    실제보다 높은 점수를 받는 일을 막는다. `PerInvocationResult` 는
+    `actual_invocation` 이 필수 필드라 짝이 없는 invocation 에 대해서는
+    결과 행 자체를 만들 수 없기 때문에, 분모만 조정하는 방식을 쓴다.
+
     Args:
         eval_metric: 메트릭 정보. threshold 는 신뢰할 수 없다.
         actual_invocations: 실제 실행 결과.
@@ -67,8 +75,15 @@ def delegation_route_score(
         invocation 별 점수와 그 평균을 담은 결과.
     """
     expected = expected_invocations or []
-    results: list[PerInvocationResult] = []
 
+    if not expected:
+        return EvaluationResult(
+            overall_score=None,
+            overall_eval_status=EvalStatus.NOT_EVALUATED,
+            per_invocation_results=[],
+        )
+
+    results: list[PerInvocationResult] = []
     for actual, exp in zip(actual_invocations, expected):
         matched = _tool_names(actual) == _tool_names(exp)
         results.append(
@@ -80,14 +95,8 @@ def delegation_route_score(
             )
         )
 
-    if not results:
-        return EvaluationResult(
-            overall_score=None,
-            overall_eval_status=EvalStatus.NOT_EVALUATED,
-            per_invocation_results=[],
-        )
-
-    overall = sum(result.score for result in results) / len(results)
+    denominator = max(len(actual_invocations), len(expected))
+    overall = sum(result.score for result in results) / denominator
     return EvaluationResult(
         overall_score=overall,
         overall_eval_status=(

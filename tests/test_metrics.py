@@ -81,6 +81,17 @@ def test_partial_match_averages_across_invocations() -> None:
     assert delegation_route_score(_METRIC, actual, expected).overall_score == 0.5
 
 
+def test_missing_trailing_invocation_dilutes_score() -> None:
+    """expected 가 actual 보다 길면 zip 이 자르는 대신 분모가 늘어나 희석된다."""
+    actual = [_invocation(("stats_agent", {}))]
+    expected = [
+        _invocation(("stats_agent", {})),
+        _invocation(("convert_agent", {})),
+    ]
+
+    assert delegation_route_score(_METRIC, actual, expected).overall_score == 0.5
+
+
 def test_no_expected_invocations_is_not_evaluated() -> None:
     result = delegation_route_score(_METRIC, [_invocation()], None)
 
