@@ -30,3 +30,15 @@ def no_network(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(socket, "socket", _blocked)
     monkeypatch.setattr(socket, "create_connection", _blocked)
     monkeypatch.setattr(socket, "getaddrinfo", _blocked)
+
+
+@pytest.fixture(scope="session", autouse=True)
+def register_metrics() -> None:
+    """커스텀 메트릭을 ADK 레지스트리에 등록한다.
+
+    `AgentEvaluator` 는 커스텀 메트릭을 자동 등록하지 않으므로
+    평가 실행 전에 반드시 한 번 수행되어야 한다.
+    """
+    from agents.orchestration_lab.metrics import register_custom_metrics
+
+    register_custom_metrics()
