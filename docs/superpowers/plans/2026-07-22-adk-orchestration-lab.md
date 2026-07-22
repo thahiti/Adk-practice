@@ -1940,7 +1940,7 @@ Expected: FAIL — `FileNotFoundError` (test_files 디렉토리가 없다)
 - [ ] **Step 6: 테스트 통과 확인**
 
 Run: `uv run pytest tests/test_eval_sets.py -q`
-Expected: PASS — 9개 통과.
+Expected: PASS — 8개 통과.
 
 - [ ] **Step 7: 커밋**
 
