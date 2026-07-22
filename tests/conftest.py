@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import socket
 from typing import Any, NoReturn
 
@@ -42,3 +43,32 @@ def register_metrics() -> None:
     from agents.orchestration_lab.metrics import register_custom_metrics
 
     register_custom_metrics()
+
+
+def _model_credentials_available() -> bool:
+    """선택된 백엔드의 자격증명이 있는지 확인한다."""
+    backend = os.environ.get("MODEL_BACKEND", "vertex")
+    if backend == "openai":
+        return bool(os.environ.get("OPENAI_API_KEY"))
+    try:
+        import google.auth
+
+        google.auth.default()
+    except Exception:
+        return False
+    return True
+
+
+def pytest_collection_modifyitems(
+    config: pytest.Config, items: list[pytest.Item]
+) -> None:
+    """모델 자격증명이 없으면 requires_model 테스트를 건너뛴다."""
+    if _model_credentials_available():
+        return
+    backend = os.environ.get("MODEL_BACKEND", "vertex")
+    skip = pytest.mark.skip(
+        reason=f"MODEL_BACKEND={backend} 자격증명이 없습니다."
+    )
+    for item in items:
+        if "requires_model" in item.keywords:
+            item.add_marker(skip)
