@@ -226,7 +226,7 @@ def resolve_planner() -> BasePlanner | None:
 
 툴이 순수 함수라는 사실을 문서로 주장하지 않고 **테스트로 강제**한다.
 
-`tests/conftest.py`에 `socket.socket`을 monkeypatch해 모든 연결을 차단하는 fixture를 둔다. 툴 레이어 테스트는 이 fixture 안에서 실행되므로, 누군가 나중에 툴에 HTTP 호출을 추가하면 테스트가 깨진다.
+`tests/conftest.py`에 `socket.socket`을 monkeypatch해 모든 연결을 차단하는 fixture를 둔다. 전용 파일 `tests/test_no_network.py`가 이 fixture 아래에서 각 툴을 실행하므로, 누군가 나중에 툴에 HTTP 호출을 추가하면 이 파일이 깨진다.
 
 pytest 마커로 두 계층을 분리한다:
 
@@ -325,8 +325,20 @@ def delegation_route_score(
     합격 판정은 AgentEvaluator가 test_config.json의 threshold로 수행하므로
     (F13) 여기서는 점수만 정확히 채운다. eval_metric.threshold는 호출 직전
     None으로 덮어써지므로 읽지 않는다 (F14).
+
+    actual_invocations와 expected의 길이가 다르면 zip이 짧은 쪽 기준으로
+    잘라내므로, 점수 합을 len(results)가 아니라
+    max(len(actual_invocations), len(expected))로 나눈다. 길이 불일치는
+    이렇게 점수를 희석시키며, 조용히 무시되지 않는다.
     """
     expected = expected_invocations or []
+    if not expected:
+        return EvaluationResult(
+            overall_score=None,
+            overall_eval_status=EvalStatus.NOT_EVALUATED,
+            per_invocation_results=[],
+        )
+
     results: list[PerInvocationResult] = [
         PerInvocationResult(
             actual_invocation=actual,
@@ -341,13 +353,12 @@ def delegation_route_score(
         for actual, exp in zip(actual_invocations, expected)
     ]
 
-    overall = sum(r.score for r in results) / len(results) if results else None
+    denominator = max(len(actual_invocations), len(expected))
+    overall = sum(r.score for r in results) / denominator
     return EvaluationResult(
         overall_score=overall,
         overall_eval_status=(
-            EvalStatus.NOT_EVALUATED if overall is None
-            else EvalStatus.PASSED if overall == 1.0
-            else EvalStatus.FAILED
+            EvalStatus.PASSED if overall == 1.0 else EvalStatus.FAILED
         ),
         per_invocation_results=results,
     )
