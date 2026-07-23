@@ -1,0 +1,81 @@
+{
+  "eval_set_id": "single_hop",
+  "name": "single_hop",
+  "eval_cases": [
+    {
+      "eval_id": "stats_only",
+      "conversation": [
+        {
+          "invocation_id": "single-hop-001",
+          "user_content": {
+            "role": "user",
+            "parts": [{ "text": "12, 15, 21의 평균을 구해줘" }]
+          },
+          "intermediate_data": {
+            "tool_uses": [
+              {
+                "name": "stats_agent",
+                "args": { "values": [12, 15, 21], "operation": "mean" }
+              }
+            ],
+            "intermediate_responses": []
+          },
+          "final_response": {
+            "role": "model",
+            "parts": [{ "text": "16.0" }]
+          }
+        }
+      ]
+    },
+    {
+      "eval_id": "convert_only",
+      "conversation": [
+        {
+          "invocation_id": "single-hop-002",
+          "user_content": {
+            "role": "user",
+            "parts": [{ "text": "섭씨 25도를 화씨로 바꿔줘" }]
+          },
+          "intermediate_data": {
+            "tool_uses": [
+              {
+                "name": "convert_agent",
+                "args": { "value": 25, "conversion": "celsius_to_fahrenheit" }
+              }
+            ],
+            "intermediate_responses": []
+          },
+          "final_response": {
+            "role": "model",
+            "parts": [{ "text": "77.0" }]
+          }
+        }
+      ]
+    },
+    {
+      "eval_id": "calc_only",
+      "conversation": [
+        {
+          "invocation_id": "single-hop-003",
+          "user_content": {
+            "role": "user",
+            "parts": [{ "text": "7의 3승을 계산해줘" }]
+          },
+          "intermediate_data": {
+            "tool_uses": [
+              {
+                "name": "calc_agent",
+                "args": { "left": 7, "right": 3, "operation": "power" }
+              }
+            ],
+            "intermediate_responses": []
+          },
+          "final_response": {
+            "role": "model",
+            "parts": [{ "text": "343.0" }]
+          }
+        }
+      ]
+    }
+  ]
+}

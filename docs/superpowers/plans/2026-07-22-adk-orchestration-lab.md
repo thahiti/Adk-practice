@@ -1098,7 +1098,7 @@ calc_agent = LlmAgent(
 - [ ] **Step 7: 테스트 통과 확인**
 
 Run: `uv run pytest tests/test_sub_agents.py -q`
-Expected: PASS — 13개 통과. 특히 `test_agent_tool_exposes_typed_parameters`와 대조군 `test_without_input_schema_parameters_degrade_to_free_text`가 통과해야 한다. 이 두 테스트가 설계의 토대를 고정한다.
+Expected: PASS — 12개 통과. 특히 `test_agent_tool_exposes_typed_parameters`와 대조군 `test_without_input_schema_parameters_degrade_to_free_text`가 통과해야 한다. 이 두 테스트가 설계의 토대를 고정한다.
 
 - [ ] **Step 8: 커밋**
 
@@ -1940,7 +1940,7 @@ Expected: FAIL — `FileNotFoundError` (test_files 디렉토리가 없다)
 - [ ] **Step 6: 테스트 통과 확인**
 
 Run: `uv run pytest tests/test_eval_sets.py -q`
-Expected: PASS — 9개 통과.
+Expected: PASS — 8개 통과.
 
 - [ ] **Step 7: 커밋**
 

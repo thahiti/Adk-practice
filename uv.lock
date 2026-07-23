@@ -20,12 +20,13 @@ wheels = [
 ]
 
 [[package]]
-name = "adk-triage-lab"
+name = "adk-orchestration-lab"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "google-adk", extra = ["eval"] },
     { name = "litellm" },
+    { name = "python-dotenv" },
 ]
 
 [package.dev-dependencies]
@@ -38,6 +39,7 @@ dev = [
 requires-dist = [
     { name = "google-adk", extras = ["eval"], specifier = "==1.36.1" },
     { name = "litellm", specifier = ">=1.83.7,<=1.83.14" },
+    { name = "python-dotenv", specifier = ">=1.2.2" },
 ]
 
 [package.metadata.requires-dev]

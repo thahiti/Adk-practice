@@ -1,0 +1,76 @@
+{
+  "eval_set_id": "multi_hop",
+  "name": "multi_hop",
+  "eval_cases": [
+    {
+      "eval_id": "mean_then_c2f",
+      "conversation": [
+        {
+          "invocation_id": "multi-hop-001",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "12, 15, 21의 평균을 구하고 그 값을 섭씨에서 화씨로 바꿔줘"
+              }
+            ]
+          },
+          "intermediate_data": {
+            "tool_uses": [
+              {
+                "name": "stats_agent",
+                "args": { "values": [12, 15, 21], "operation": "mean" }
+              },
+              {
+                "name": "convert_agent",
+                "args": { "value": 16, "conversion": "celsius_to_fahrenheit" }
+              }
+            ],
+            "intermediate_responses": []
+          },
+          "final_response": {
+            "role": "model",
+            "parts": [{ "text": "60.8" }]
+          }
+        }
+      ]
+    },
+    {
+      "eval_id": "max_mul_km2mile",
+      "conversation": [
+        {
+          "invocation_id": "multi-hop-002",
+          "user_content": {
+            "role": "user",
+            "parts": [
+              {
+                "text": "3, 5, 10의 최댓값에 2를 곱하고 그 결과를 km에서 마일로 바꿔줘"
+              }
+            ]
+          },
+          "intermediate_data": {
+            "tool_uses": [
+              {
+                "name": "stats_agent",
+                "args": { "values": [3, 5, 10], "operation": "max" }
+              },
+              {
+                "name": "calc_agent",
+                "args": { "left": 10, "right": 2, "operation": "multiply" }
+              },
+              {
+                "name": "convert_agent",
+                "args": { "value": 20, "conversion": "km_to_mile" }
+              }
+            ],
+            "intermediate_responses": []
+          },
+          "final_response": {
+            "role": "model",
+            "parts": [{ "text": "12.427423844746679" }]
+          }
+        }
+      ]
+    }
+  ]
+}

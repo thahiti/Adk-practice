@@ -1,16 +1,26 @@
 [project]
-name = "adk-triage-lab"
+name = "adk-orchestration-lab"
 version = "0.1.0"
-description = "Add your description here"
+description = "ADK 1.36.1 멀티 에이전트 위임 평가 레퍼런스 랩"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "google-adk[eval]==1.36.1",
     "litellm>=1.83.7,<=1.83.14",
+    "python-dotenv>=1.2.2",
 ]
 
 [dependency-groups]
 dev = [
     "pytest>=9.1.1",
     "pytest-asyncio>=1.4.0",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+pythonpath = ["."]
+testpaths = ["tests"]
+markers = [
+    "offline: 네트워크가 차단된 상태에서 실행되는 테스트",
+    "requires_model: 실제 모델 호출이 필요한 테스트",
 ]

@@ -1,0 +1,15 @@
+{
+  "criteria": {
+    "delegation_route_score": 1.0,
+    "tool_trajectory_avg_score": { "threshold": 0.75, "matchType": "EXACT" },
+    "response_match_score": { "threshold": 0.5 }
+  },
+  "customMetrics": {
+    "delegation_route_score": {
+      "codeConfig": {
+        "name": "agents.orchestration_lab.metrics.delegation_route_score"
+      },
+      "description": "위임 대상 에이전트의 호출 순서만 비교 (인자 무시)"
+    }
+  }
+}
