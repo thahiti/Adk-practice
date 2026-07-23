@@ -16,7 +16,11 @@ from typing import Optional
 
 from google.adk.cli.cli_eval import get_default_metric_info
 from google.adk.evaluation.custom_metric_evaluator import _CustomMetricEvaluator
-from google.adk.evaluation.eval_case import ConversationScenario, Invocation
+from google.adk.evaluation.eval_case import (
+    ConversationScenario,
+    Invocation,
+    get_all_tool_calls,
+)
 from google.adk.evaluation.eval_metrics import EvalMetric
 from google.adk.evaluation.evaluator import (
     EvalStatus,
@@ -34,15 +38,21 @@ METRIC_DESCRIPTION = "위임 대상 에이전트의 호출 순서만 비교 (인
 def _tool_names(invocation: Optional[Invocation]) -> list[str]:
     """Invocation 에서 툴 호출 이름 시퀀스를 뽑는다.
 
+    `intermediate_data` 는 `IntermediateData`(eval 셋의 기대값)와
+    `InvocationEvents`(실제 런타임 결과) 두 타입의 Union 이다. 전자는
+    `tool_uses` 를 직접 갖지만 후자는 이벤트 목록 안에 function_call 이
+    흩어져 있다. ADK 의 `get_all_tool_calls` 헬퍼가 두 타입을 모두 처리하며,
+    내장 `TrajectoryEvaluator` 도 같은 헬퍼를 쓴다.
+
     Args:
         invocation: 대상 invocation. None 이면 빈 목록을 돌려준다.
 
     Returns:
         호출 순서대로의 툴 이름 목록.
     """
-    if invocation is None or invocation.intermediate_data is None:
+    if invocation is None:
         return []
-    return [call.name for call in invocation.intermediate_data.tool_uses]
+    return [call.name for call in get_all_tool_calls(invocation.intermediate_data)]
 
 
 def delegation_route_score(
