@@ -10,7 +10,7 @@ from __future__ import annotations
 from google.adk.agents import LlmAgent
 from google.adk.tools.agent_tool import AgentTool
 
-from .config import resolve_model, resolve_planner
+from .config import resolve_model
 from .sub_agents.calc_agent import calc_agent
 from .sub_agents.convert_agent import convert_agent
 from .sub_agents.stats_agent import stats_agent
@@ -37,7 +37,6 @@ _INSTRUCTION = """\
 root_agent = LlmAgent(
     name="orchestration_lab",
     model=resolve_model(),
-    planner=resolve_planner(),
     description=(
         "산술·단위변환·통계 요청을 전담 서브에이전트에 위임하는 오케스트레이터."
     ),

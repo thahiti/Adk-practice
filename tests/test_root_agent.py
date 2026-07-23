@@ -32,13 +32,11 @@ def test_root_agent_is_discoverable_by_adk() -> None:
     assert app.agent.root_agent is root_agent
 
 
-def test_planner_follows_orchestration_mode(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    """토글이 실제로 루트에 반영되는지 확인한다."""
-    from google.adk.planners import PlanReActPlanner
+def test_root_agent_has_no_planner() -> None:
+    """오케스트레이션은 ReAct 단일 방식이다.
 
-    from agents.orchestration_lab.config import resolve_planner
-
-    monkeypatch.setenv("ORCHESTRATION_MODE", "plan_execute")
-    assert isinstance(resolve_planner(), PlanReActPlanner)
+    PlanReActPlanner 는 프롬프트 프로토콜이 Gemini 관행(텍스트 태그 +
+    함수호출 혼합 응답)을 전제해 OpenAI 백엔드에서 위임이 0회로 끝나는
+    것을 실측 확인 후 제거했다. planner 가 다시 붙으면 이 테스트가 깨진다.
+    """
+    assert root_agent.planner is None

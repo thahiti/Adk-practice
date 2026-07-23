@@ -1,7 +1,13 @@
-"""모델 백엔드와 오케스트레이션 모드 토글.
+"""모델 백엔드 토글.
 
-에이전트 배선은 어느 조합에서도 동일하고, 여기서 주입하는 두 값만 바뀐다.
-백엔드 2종 × 오케스트레이션 2종 = 4개 조합이 랩의 측정 대상이다.
+에이전트 배선은 백엔드와 무관하게 동일하고, 여기서 주입하는 모델 값만 바뀐다.
+오케스트레이션은 ReAct(관찰-행동 반복) 단일 방식이다.
+
+이전에는 `ORCHESTRATION_MODE` 토글로 `PlanReActPlanner` 를 붙일 수 있었으나
+제거했다. 해당 플래너의 프롬프트 프로토콜(/*PLANNING*/ 텍스트 태그 + 코드
+스타일 액션)은 Gemini 의 텍스트/함수호출 혼합 응답 관행을 전제하며, OpenAI
+모델은 계획 텍스트만 내고 툴을 호출하지 않아 위임이 0회로 끝나는 것을
+실측으로 확인했다.
 """
 
 from __future__ import annotations
@@ -9,7 +15,6 @@ from __future__ import annotations
 import os
 
 from google.adk.models.lite_llm import LiteLlm
-from google.adk.planners import BasePlanner, PlanReActPlanner
 
 ModelLike = str | LiteLlm
 
@@ -34,23 +39,3 @@ def resolve_model() -> ModelLike:
             model=os.environ.get("OPENAI_MODEL", _DEFAULT_OPENAI_MODEL)
         )
     raise ValueError(f"Unknown MODEL_BACKEND: {backend}")
-
-
-def resolve_planner() -> BasePlanner | None:
-    """`ORCHESTRATION_MODE` 에 따라 플래너를 결정한다.
-
-    `PlanReActPlanner` 는 프롬프트 기반이라 두 모델 백엔드 모두에서
-    동일하게 동작한다.
-
-    Returns:
-        react 모드면 None, plan_execute 모드면 `PlanReActPlanner`.
-
-    Raises:
-        ValueError: 알 수 없는 모드인 경우.
-    """
-    mode = os.environ.get("ORCHESTRATION_MODE", "react")
-    if mode == "react":
-        return None
-    if mode == "plan_execute":
-        return PlanReActPlanner()
-    raise ValueError(f"Unknown ORCHESTRATION_MODE: {mode}")
