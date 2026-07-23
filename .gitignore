@@ -9,3 +9,6 @@ wheels/
 # Virtual environments
 .venv
 .superpowers/
+
+# 로컬 시크릿 — 절대 커밋 금지
+.env
